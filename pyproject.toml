@@ -1,0 +1,19 @@
+[project]
+name = "ai-study-buddy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Ivan Krastev", email = "igkrastev@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
+
+[project.scripts]
+ai-study-buddy = "ai_study_buddy:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
