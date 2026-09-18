@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile
 
+from ai_study_buddy.services.ai_service import generate_summary
 from ai_study_buddy.services.file_service import ExtractFile
 
 app = FastAPI()
@@ -16,4 +17,16 @@ async def extract_text(file: UploadFile):
     text = await extractor.extract_text()
     return {
         'text': text
+    }
+
+
+@app.post('/generate/summary')
+async def generate_ai_summary(file: UploadFile):
+    extractor = ExtractFile(file)
+    notes = await extractor.extract_text()
+
+    summary = await generate_summary(notes)
+
+    return {
+        'summary': summary
     }
