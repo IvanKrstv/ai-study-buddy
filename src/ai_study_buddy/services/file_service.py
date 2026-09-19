@@ -7,7 +7,7 @@ from pypdf.errors import PdfReadError, FileNotDecryptedError
 from docx import Document
 import io
 
-from ai_study_buddy.services.file_validator import FileValidator
+from ai_study_buddy.validators.file_validator import FileValidator
 
 
 class ExtractFile:
