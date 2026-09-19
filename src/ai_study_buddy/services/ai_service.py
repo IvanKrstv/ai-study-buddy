@@ -1,8 +1,9 @@
 from fastapi import HTTPException
 from openai import APIConnectionError, AsyncOpenAI
 
+from ai_study_buddy.models.flashcard_structure_models import FlashcardResponse
 from ai_study_buddy.models.quiz_structure_models import QuizResponse
-from ai_study_buddy.validators.ai_service_validator import validate_quiz
+from ai_study_buddy.validators.ai_service_validator import validate_quiz, validate_flashcards
 
 MODEL = "qwen2.5:7b-instruct" # model used for generating content
 
@@ -47,8 +48,24 @@ Output only the quiz itself. Do not include headers like "Quiz:" or any meta-com
 """
 
 
-FLASHCARDS_SYSTEM_PROMPT = """
+FLASHCARDS_SYSTEM_PROMPT = """You are a study assistant that creates clear, accurate flashcards based on student notes.
+
+Your task: read the notes provided by the user and produce a set of accurate flashcards that consist of question-answer pairs on the key concepts, definitions, and relationships between ideas.
+
+Rules:
+- Preserve technical terms, formulas, and specific names exactly as they appear in the source.
+- Do not add information that is not present in the notes.
+- Do not include your own opinions, commentary, or filler phrases like "This document discusses...".
+- Follow strictly the requirements for number of flashcards from the given prompt.
+- Each flashcard has exactly one question and one correct answer.
+- Avoid one-to-one restatements of a definition; where possible, frame the question to require connecting the concept to another idea, an example, or a "why/when" instead of a plain "what is X".
+- Follow strictly the response format, presented in the request.
+- If the notes contain no meaningful academic content to make flashcards of, return an empty flashcards list.
+- Output the flashcards in the language which the notes are written in.
+
+Output only the flashcards themselves. Do not include headers like "Flashcards:" or any meta-commentary before or after it.
 """
+
 
 async def generate_summary(notes: str) -> str:
     try:
@@ -104,5 +121,30 @@ async def generate_quiz(notes: str, num_options: int = 4, num_questions: int = 5
     return quiz
 
 
-async def generate_flashcards(notes: str, num_flashcards: int = 5):
-    pass
+async def generate_flashcards(notes: str, num_flashcards: int = 5) -> FlashcardResponse:
+    try:
+        response = await client.chat.completions.parse(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": FLASHCARDS_SYSTEM_PROMPT},
+                {"role": "user", "content": f"Generate approximately {num_flashcards} flashcards from the following notes.\n\n"
+                                            f"---\n{notes}\n---"}
+            ],
+            response_format=FlashcardResponse,
+            temperature=0.2
+        )
+    except APIConnectionError:
+        raise HTTPException(
+            status_code=503,
+            detail="Could not connect to the local AI model. Make sure Ollama is running and the model is pulled."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"AI generation failed: {str(e)}"
+        )
+
+    flashcards = response.choices[0].message.parsed
+    validate_flashcards(flashcards, expected_flashcards=num_flashcards)
+
+    return flashcards

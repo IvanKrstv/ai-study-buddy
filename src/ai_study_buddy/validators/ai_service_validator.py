@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+from ai_study_buddy.models.flashcard_structure_models import FlashcardResponse
 from ai_study_buddy.models.quiz_structure_models import QuizResponse
 
 
@@ -27,3 +28,19 @@ def validate_quiz(quiz: QuizResponse, expected_options: int, expected_questions:
                 status_code=502,
                 detail=f"Question {i + 1} has an invalid correct_answer_index."
             )
+
+
+def validate_flashcards(flashcards_response: FlashcardResponse, expected_flashcards:int) -> None:
+    if not flashcards_response.flashcards:
+        raise HTTPException(
+            status_code=422,
+            detail="The notes don't contain enough meaningful content to generate flashcards."
+        )
+
+    min_acceptable = max(1, round(expected_flashcards * 0.7))  # accepts at least 70% of the expected number
+
+    if len(flashcards_response.flashcards) < min_acceptable:
+        raise HTTPException(
+            status_code=502,
+            detail=f"AI returned only {len(flashcards_response.flashcards)} flashcards, expected around {expected_flashcards}."
+        )

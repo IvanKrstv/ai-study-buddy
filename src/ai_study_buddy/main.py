@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile
 
-from ai_study_buddy.services.ai_service import generate_summary, generate_quiz
+from ai_study_buddy.services.ai_service import generate_summary, generate_quiz, generate_flashcards
 from ai_study_buddy.services.file_service import ExtractFile
 
 app = FastAPI()
@@ -41,4 +41,16 @@ async def generate_ai_quiz(file: UploadFile):
 
     return {
         'quiz': quiz
+    }
+
+
+@app.post('/generate/flashcards')
+async def generate_ai_flashcards(file: UploadFile):
+    extractor = ExtractFile(file)
+    notes = await extractor.extract_text()
+
+    flashcards = await generate_flashcards(notes, num_flashcards=5)
+
+    return {
+        'flashcards': flashcards
     }

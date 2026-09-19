@@ -12,7 +12,7 @@ class FileValidator:
     }
 
 
-    def validate_file_size(self, file_size: int):
+    def validate_file_size(self, file_size: int) -> None:
         if file_size > self._MAX_FILE_SIZE_BYTES:
             raise HTTPException(
                 status_code=413,
@@ -38,7 +38,7 @@ class FileValidator:
             )
 
     @staticmethod
-    def empty_text_content_check(text: str | list[str], error_message: str):
+    def empty_text_content_check(text: str | list[str], error_message: str) -> None:
         combined = text if isinstance(text, str) else ''.join(text)
         if not combined.strip():
             raise HTTPException(
