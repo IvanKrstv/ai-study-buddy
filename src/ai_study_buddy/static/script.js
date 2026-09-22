@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', main)
 
-
+// Default language
 const DEFAULT_LANGUAGE = 'en'
 
+// Language translations in EN and BG
 const translations = {
     'en': {
         'header.title': 'Study smarter, not harder.',
@@ -51,6 +52,14 @@ const translations = {
     }
 }
 
+// Buttons
+const fileInputBtn = document.getElementById('file-input')
+const removeFileBtn = document.querySelector('.remove-file')
+const generateBtn = document.getElementById('generate-button')
+
+let selectedFile = null
+let selectedGenerator = 'summary'
+
 
 function main() {
     applyLanguage(DEFAULT_LANGUAGE)
@@ -60,7 +69,59 @@ function main() {
             applyLanguage(btn.dataset.lang)
         })
     })
+
+    document.getElementById('upload-area').addEventListener('click', () => {
+        fileInputBtn.click()
+    })
+
+    fileInputBtn.addEventListener('change', (e) => {
+        selectedFile = e.target.files[0]
+
+        if (selectedFile){
+            document.querySelector('.selected-file').style.display = 'flex'
+            document.getElementById('file-icon').textContent = selectedFile.name.split('.').pop().toLowerCase()
+            document.getElementById('file-name').textContent = selectedFile.name
+        }
+    })
+
+    removeFileBtn.addEventListener('click', () => {
+        selectedFile = null
+        document.querySelector('.selected-file').style.display = 'none'
+    })
+
+    document.querySelectorAll('.option').forEach(el => {
+        el.addEventListener('click', (e) => {
+            document.querySelectorAll('.option').forEach(el => {
+                el.classList.remove('active')
+            })
+            e.currentTarget.classList.toggle('active')
+            selectedGenerator = e.currentTarget.id
+        })
+    })
+
+    generateBtn.addEventListener('click', generateService)
+
 }
+
+
+async function generateService() {
+    const formData = new FormData()
+    formData.append('file', selectedFile)
+
+    const response = await fetch(`http://127.0.0.1:8000/generate/${selectedGenerator}`, {
+        method: 'POST',
+        body: formData
+    })
+
+    const data = await response.json()
+
+    console.log(data['summary'])
+
+    document.querySelector('.result').style.display = 'block'
+    updateTranslation(document.querySelector('.result-title'), `results.title.${selectedGenerator}`)
+    updateTranslation(document.querySelector('.result-type'), `generation.${selectedGenerator}`)
+}
+
 
 function applyLanguage(lang) {
     document.documentElement.lang = lang
@@ -75,3 +136,9 @@ function applyLanguage(lang) {
     })
 }
 
+
+function updateTranslation(element, key) {
+    const currentLang = document.documentElement.lang
+    element.dataset.i18n = key
+    element.textContent = translations[currentLang][key]
+}

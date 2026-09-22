@@ -1,4 +1,7 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.staticfiles import StaticFiles
+
+from pathlib import Path
 
 from ai_study_buddy.services.ai_service import generate_summary, generate_quiz, generate_flashcards
 from ai_study_buddy.services.file_service import ExtractFile
@@ -6,9 +9,7 @@ from ai_study_buddy.services.file_service import ExtractFile
 app = FastAPI()
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+BASE_DIR = Path(__file__).resolve().parent
 
 
 @app.post('/extract')
@@ -54,3 +55,6 @@ async def generate_ai_flashcards(file: UploadFile):
     return {
         'flashcards': flashcards
     }
+
+
+app.mount("/", StaticFiles(directory=BASE_DIR / "static", html=True), name="static")
