@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Buddy</title>
+
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+
+    <main class="page">
+
+        <div class="container">
+
+            <!-- Header -->
+            <header class="header">
+
+                <div class="brand">
+                    <div class="brand-mark">S</div>
+                    <span>AI Study Buddy</span>
+                </div>
+
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="bg">BG</button>
+                </div>
+
+                <h1 data-i18n="header.title"></h1>
+
+                <p data-i18n="header.paragraph"></p>
+
+            </header>
+
+
+            <!-- Main Study Interface -->
+            <section class="study-card">
+
+                <!-- Upload -->
+                <div class="section">
+
+                    <label class="section-label" data-i18n="upload.instruction"></label>
+
+                    <div class="upload-area">
+
+                        <div class="upload-content">
+
+                            <div class="upload-icon">
+                                ↑
+                            </div>
+
+                            <div class="upload-title" data-i18n="upload.drop_file"></div>
+
+                            <div class="upload-description" data-i18n="upload.choose_file"></div>
+
+                            <div class="browse-button" data-i18n="upload.browse"></div>
+
+                            <div class="file-info" data-i18n="upload.file_types"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Selected File -->
+                <div class="section">
+
+                    <label class="section-label" data-i18n="selected_file"></label>
+
+                    <div class="selected-file">
+
+                        <div class="file-details">
+
+                            <div class="file-icon">
+                                PDF
+                            </div>
+
+                            <div>
+                                <div class="file-name">
+                                    lecture-notes.pdf
+                                </div>
+
+                                <div class="file-status" data-i18n="selected_file.generation"></div>
+                            </div>
+
+                        </div>
+
+                        <button class="remove-file" type="button">
+                            ×
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Generation Options -->
+                <div class="section">
+
+                    <label class="section-label" data-i18n="generation.question"></label>
+
+                    <div class="options">
+
+                        <div class="option active">
+
+                            <div class="option-title" data-i18n="generation.summary"></div>
+
+                            <div class="option-description" data-i18n="generation.summary_text"></div>
+
+                        </div>
+
+
+                        <div class="option">
+
+                            <div class="option-title" data-i18n="generation.quiz"></div>
+
+                            <div class="option-description" data-i18n="generation.quiz_text"></div>
+
+                        </div>
+
+
+                        <div class="option">
+
+                            <div class="option-title" data-i18n="generation.flashcards"></div>
+
+                            <div class="option-description" data-i18n="generation.flashcards_text"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Generate -->
+                <div class="section">
+
+                    <button class="generate-button" type="button" data-i18n="generate"></button>
+
+                </div>
+
+            </section>
+
+
+            <!--
+                Result container.
+
+                Keep this hidden with CSS/JS until the backend
+                returns the generated material.
+            -->
+
+            <section class="result">
+
+                <div class="result-header">
+
+                    <h2 class="result-title" data-i18n="results.title.summary"></h2>
+
+                    <span class="result-type" data-i18n="generation.summary"></span>
+
+                </div>
+
+                <div class="result-content">
+
+                    <p>
+                        Your generated study material will appear here.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</body>
+<script src="script.js"></script>
+</html>
