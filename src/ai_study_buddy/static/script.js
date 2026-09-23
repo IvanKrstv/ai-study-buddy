@@ -115,18 +115,35 @@ function main() {
         })
     })
 
-    document.getElementById('upload-area').addEventListener('click', () => {
+    const uploadArea = document.getElementById('upload-area')
+
+    uploadArea.addEventListener('click', () => {
         fileInputBtn.click()
     })
-    fileInputBtn.addEventListener('change', (e) => {
-        selectedFile = e.target.files[0]
 
-        if (selectedFile){
-            document.querySelector('.selected-file').style.display = 'flex'
-            document.getElementById('file-icon').textContent = selectedFile.name.split('.').pop().toUpperCase()
-            document.getElementById('file-name').textContent = selectedFile.name
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault()
+        uploadArea.classList.add('dragover')
+    })
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover')
+    })
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault()
+        uploadArea.classList.remove('dragover')
+        if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+            handleFileSelection(e.dataTransfer.files[0])
         }
     })
+
+    fileInputBtn.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFileSelection(e.target.files[0])
+        }
+    })
+
     removeFileBtn.addEventListener('click', () => {
         selectedFile = null
         fileInputBtn.value = ''
@@ -150,6 +167,15 @@ function main() {
     document.getElementById('flashcard-container').addEventListener('click', flipCard)
     document.getElementById('flashcard-prev-btn').addEventListener('click', prevFlashcard)
     document.getElementById('flashcard-next-btn').addEventListener('click', nextFlashcard)
+}
+
+
+function handleFileSelection(file) {
+    if (!file) return
+    selectedFile = file
+    document.querySelector('.selected-file').style.display = 'flex'
+    document.getElementById('file-icon').textContent = file.name.split('.').pop().toUpperCase()
+    document.getElementById('file-name').textContent = file.name
 }
 
 

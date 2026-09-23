@@ -153,7 +153,8 @@ body {
         background 0.2s ease;
 }
 
-.upload-area:hover {
+.upload-area:hover,
+.upload-area.dragover {
     border-color: var(--accent);
     background: #f8faff;
 }
