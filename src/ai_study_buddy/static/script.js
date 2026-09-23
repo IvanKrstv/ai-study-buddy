@@ -154,7 +154,18 @@ function main() {
 
 
 async function generateService() {
-    if (!selectedFile) return
+    const previousPEl = document.querySelector('.study-card p')
+    if (previousPEl) {
+        previousPEl.remove()
+    }
+
+    if (!selectedFile) {
+        const pEl = document.createElement('p')
+        pEl.textContent = 'Please select a file with your notes...'
+        document.querySelector('.study-card').appendChild(pEl)
+
+        return
+    }
 
     const currentLang = document.documentElement.lang
 
