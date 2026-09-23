@@ -36,7 +36,7 @@
 
                 <div class="section">
 
-                    <label class="section-label" data-i18n="upload.instruction"></label>
+                    <label class="section-label" data-i18n="upload.instructions"></label>
 
                     <div class="upload-area" id="upload-area">
                         <input type="file" id="file-input" accept=".pdf,.docx,.txt" hidden>
@@ -120,20 +120,107 @@
             </section>
 
 
-            <section class="result">
+            <section class="result" id="result-section">
 
                 <div class="result-header">
 
                     <h2 class="result-title" data-i18n="results.title.summary"></h2>
-                    <span class="result-type" data-i18n="generation.summary"></span>
 
                 </div>
 
                 <div class="result-content">
 
-                    <p>
-                        Your generated study material will appear here.
-                    </p>
+                    <p></p>
+
+                </div>
+
+            </section>
+
+
+            <section class="quiz-section" id="quiz-section">
+
+                <div class="quiz-header">
+
+                    <h2 class="quiz-title" data-i18n="results.title.quiz"></h2>
+                    <span class="quiz-progress" id="quiz-progress"></span>
+
+                </div>
+
+                <div class="quiz-progress-bar">
+                    <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+                </div>
+
+                <div class="quiz-question-text" id="quiz-question-text"></div>
+
+                <div class="quiz-options" id="quiz-options"></div>
+
+                <div class="quiz-explanation" id="quiz-explanation">
+
+                    <div class="quiz-explanation-icon" id="quiz-explanation-icon"></div>
+
+                    <div>
+                        <div class="quiz-explanation-title" id="quiz-explanation-title"></div>
+                        <div class="quiz-explanation-text" id="quiz-explanation-text"></div>
+                    </div>
+
+                </div>
+
+                <div class="quiz-nav">
+                    <button class="quiz-nav-btn" id="quiz-next-btn" data-i18n="quiz.next"></button>
+                </div>
+
+            </section>
+
+
+            <section class="quiz-score" id="quiz-score-section">
+
+                <div class="quiz-score-icon">🎉</div>
+                <h2 class="quiz-score-title" data-i18n="quiz.complete"></h2>
+                <div class="quiz-score-value" id="quiz-score-value"></div>
+                <p class="quiz-score-message" id="quiz-score-message"></p>
+
+                <button class="generate-button quiz-retry-btn" id="quiz-retry-btn" data-i18n="quiz.retry"></button>
+
+            </section>
+
+
+            <section class="flashcard-section" id="flashcard-section">
+
+                <div class="flashcard-header">
+
+                    <h2 class="flashcard-title" data-i18n="results.title.flashcards"></h2>
+                    <span class="flashcard-progress" id="flashcard-progress"></span>
+
+                </div>
+
+                <div class="flashcard-progress-bar">
+                    <div class="flashcard-progress-fill" id="flashcard-progress-fill"></div>
+                </div>
+
+                <div class="flashcard-container" id="flashcard-container">
+
+                    <div class="flashcard" id="flashcard">
+
+                        <div class="flashcard-face flashcard-front">
+                            <div class="flashcard-label" data-i18n="flashcard.question"></div>
+                            <div class="flashcard-text" id="flashcard-front-text"></div>
+                        </div>
+
+                        <div class="flashcard-face flashcard-back">
+                            <div class="flashcard-label" data-i18n="flashcard.answer"></div>
+                            <div class="flashcard-text" id="flashcard-back-text"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="flashcard-hint" data-i18n="flashcard.hint"></div>
+
+                <div class="flashcard-nav">
+
+                    <button class="flashcard-nav-btn flashcard-prev-btn" id="flashcard-prev-btn" data-i18n="flashcard.prev"></button>
+                    <button class="flashcard-nav-btn flashcard-next-btn" id="flashcard-next-btn" data-i18n="flashcard.next"></button>
 
                 </div>
 
@@ -143,6 +230,6 @@
 
     </main>
 
-</body>
 <script src="script.js"></script>
+</body>
 </html>

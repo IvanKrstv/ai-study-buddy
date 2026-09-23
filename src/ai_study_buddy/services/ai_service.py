@@ -40,6 +40,7 @@ Rules:
 - Follow strictly the requirements for number of questions and answer options from the given prompt.
 - Each question has exactly one correct answer.
 - Incorrect options should be plausible and related to the topic, not random or obviously wrong.
+- For each question, provide a brief explanation (1-3 sentences) of why the correct answer is right.
 - Follow strictly the response format, presented in the request.
 - If the notes contain no meaningful academic content to quiz on, return an empty questions list.
 - Output the quiz in the language which the notes are written in.
