@@ -5,6 +5,7 @@ from fastapi import HTTPException
 class FileValidator:
     _MAX_FILE_SIZE_MB = 10
     _MAX_FILE_SIZE_BYTES = _MAX_FILE_SIZE_MB * 1024 * 1024
+    _MAX_TEXT_LENGTH = 100_000  # ~25-30k tokens; prevents huge LLM bills
     _ALLOWED_CONTENT_TYPES = {
         'pdf': {'application/pdf'},
         'docx': {'application/vnd.openxmlformats-officedocument.wordprocessingml.document'},
@@ -13,6 +14,12 @@ class FileValidator:
 
 
     def validate_file_size(self, file_size: int) -> None:
+        if file_size is None:
+            raise HTTPException(
+                status_code=422,
+                detail="File size is required."
+            )
+
         if file_size > self._MAX_FILE_SIZE_BYTES:
             raise HTTPException(
                 status_code=413,
@@ -44,6 +51,13 @@ class FileValidator:
             raise HTTPException(
                 status_code=422,
                 detail=error_message
+            )
+
+    def validate_text_length(self, text: str) -> None:
+        if len(text) > self._MAX_TEXT_LENGTH:
+            raise HTTPException(
+                status_code=413,
+                detail="The extracted text is too long to process. Please upload a shorter document."
             )
 
 

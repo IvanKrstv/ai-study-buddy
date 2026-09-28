@@ -38,9 +38,18 @@ def validate_flashcards(flashcards_response: FlashcardResponse, expected_flashca
         )
 
     min_acceptable = max(1, round(expected_flashcards * 0.7))  # accepts at least 70% of the expected number
+    max_acceptable = round(expected_flashcards * 1.5)  # accepts at most 150% of the expected number
 
-    if len(flashcards_response.flashcards) < min_acceptable:
+    actual = len(flashcards_response.flashcards)
+
+    if actual < min_acceptable:
         raise HTTPException(
             status_code=502,
-            detail=f"AI returned only {len(flashcards_response.flashcards)} flashcards, expected around {expected_flashcards}."
+            detail=f"AI returned only {actual} flashcards, expected around {expected_flashcards}."
+        )
+
+    if actual > max_acceptable:
+        raise HTTPException(
+            status_code=502,
+            detail=f"AI returned {actual} flashcards, expected around {expected_flashcards}."
         )

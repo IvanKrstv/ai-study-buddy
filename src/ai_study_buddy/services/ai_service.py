@@ -77,7 +77,7 @@ ERROR_502_MESSAGE = "The AI returned an invalid response. Please try again."
 
 
 async def generate_summary(notes: str) -> str:
-    with translate_llm_errors():
+    async with translate_llm_errors():
         response = await client.chat.completions.create(
             model=MODEL,
             messages=[
@@ -96,7 +96,7 @@ async def generate_summary(notes: str) -> str:
 
 
 async def generate_quiz(notes: str, num_options: int = 4, num_questions: int = 5) -> QuizResponse:
-    with translate_llm_errors():
+    async with translate_llm_errors():
         response = await client.chat.completions.parse(
             model=MODEL,
             messages=[
@@ -119,7 +119,7 @@ async def generate_quiz(notes: str, num_options: int = 4, num_questions: int = 5
 
 
 async def generate_flashcards(notes: str, num_flashcards: int = 5) -> FlashcardResponse:
-    with translate_llm_errors():
+    async with translate_llm_errors():
         response = await client.chat.completions.parse(
             model=MODEL,
             messages=[

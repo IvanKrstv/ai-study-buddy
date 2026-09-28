@@ -18,24 +18,39 @@ class ExtractFile:
 
 
     async def extract_text(self) -> str:
+        if not self._file.filename:
+            raise HTTPException(
+                status_code=422,
+                detail='File name is required.'
+            )
+
+        if self._file.size is None:
+            raise HTTPException(
+                status_code=422,
+                detail='Could not determine file size. Please re-upload.'
+            )
+
         # Check if the file is too big
         self._validator.validate_file_size(self._file.size)
 
         # read the file content
         content = await self._file.read()
-        file_extension = self._file.filename.split('.')[-1].lower()
+        file_extension = self._file.filename.rsplit('.', 1)[-1].lower() if '.' in self._file.filename else ''
         self._validator.validate_extension(file_extension)
         self._validator.validate_content_matches_extension(file_extension, content)
 
         match file_extension:
             case 'pdf':
-                return self._extract_from_pdf(content)
+                text = self._extract_from_pdf(content)
             case 'docx':
-                return self._extract_from_docx(content)
+                text = self._extract_from_docx(content)
             case 'txt':
-                return self._extract_from_txt(content)
+                text = self._extract_from_txt(content)
             case _: # cannot be reached, cases are validated
                 raise AssertionError('unreachable')
+
+        self._validator.validate_text_length(text)
+        return text
 
 
     def _extract_from_pdf(self, content: bytes) -> str:

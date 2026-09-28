@@ -148,6 +148,10 @@ function main() {
         selectedFile = null
         fileInputBtn.value = ''
         document.querySelector('.selected-file').style.display = 'none'
+        document.getElementById('result-section').style.display = 'none'
+        document.getElementById('quiz-section').style.display = 'none'
+        document.getElementById('quiz-score-section').style.display = 'none'
+        document.getElementById('flashcard-section').style.display = 'none'
     })
 
     document.querySelectorAll('.option').forEach(el => {
@@ -202,7 +206,7 @@ async function generateService() {
         const formData = new FormData()
         formData.append('file', selectedFile)
 
-        const response = await fetch(`http://127.0.0.1:8000/generate/${selectedGenerator}`, {
+        const response = await fetch(`/generate/${selectedGenerator}`, {
             method: 'POST',
             body: formData
         })
@@ -232,9 +236,7 @@ async function generateService() {
                 break
         }
     } catch (error) {
-        if (error.message !== 'Not such state') {
-            alert(translations[currentLang]['generate.error'])
-        }
+        alert(translations[currentLang]['generate.error'])
     } finally {
         generateBtn.disabled = false
         generateBtn.textContent = translations[currentLang]['generate']
@@ -247,7 +249,8 @@ function getSummary(data) {
     updateTranslation(document.querySelector('.result-title'), `results.title.${selectedGenerator}`)
 
     const resultContent = document.querySelector('.result-content p')
-    resultContent.textContent = data['summary'] ? data['summary'].trim() : ''
+    resultContent.style.whiteSpace = 'pre-wrap'
+    resultContent.innerText = data['summary'] ? data['summary'].trim() : ''
 }
 
 

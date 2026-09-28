@@ -1,2 +1,5 @@
+import uvicorn
+
+
 def main() -> None:
-    print("Hello from ai-study-buddy!")
+    uvicorn.run("ai_study_buddy.main:app", host="127.0.0.1", port=8000)

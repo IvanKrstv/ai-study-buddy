@@ -1,5 +1,5 @@
 import logging
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 
 from fastapi import HTTPException
 from openai import (
@@ -15,8 +15,9 @@ from pydantic import ValidationError
 logger = logging.getLogger(__name__)
 
 
-@contextmanager
-def translate_llm_errors():
+@asynccontextmanager
+async def translate_llm_errors():
+
     """Turn errors from the LLM client into HTTPExceptions with user-friendly messages."""
 
     try:
