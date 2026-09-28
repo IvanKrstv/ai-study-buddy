@@ -1,16 +1,21 @@
 from fastapi import HTTPException
-from openai import APIConnectionError, AsyncOpenAI
+from openai import AsyncOpenAI
 
+from ai_study_buddy.config import settings
 from ai_study_buddy.models.flashcard_structure_models import FlashcardResponse
 from ai_study_buddy.models.quiz_structure_models import QuizResponse
 from ai_study_buddy.validators.ai_service_validator import validate_quiz, validate_flashcards
+from ai_study_buddy.validators.llm_errors import translate_llm_errors
 
-MODEL = "qwen2.5:7b-instruct" # model used for generating content
+MODEL = settings.llm_model # model used for generating content
 
 client = AsyncOpenAI(
-    base_url="http://localhost:11434/v1",
-    api_key="ollama"
+    base_url=settings.llm_base_url,
+    api_key=settings.llm_api_key
 )
+
+def _temperature(value: float | None) -> dict:
+    return {} if value is None else {'temperature': value}
 
 SUMMARY_SYSTEM_PROMPT = """You are a study assistant that creates clear, accurate summaries of student notes.
 
@@ -68,84 +73,68 @@ Output only the flashcards themselves. Do not include headers like "Flashcards:"
 """
 
 
+ERROR_502_MESSAGE = "The AI returned an invalid response. Please try again."
+
+
 async def generate_summary(notes: str) -> str:
-    try:
+    with translate_llm_errors():
         response = await client.chat.completions.create(
             model=MODEL,
             messages=[
                 {"role": "system", "content": SUMMARY_SYSTEM_PROMPT},
                 {"role": "user", "content": f"Summarize the following notes:\n\n---\n{notes}\n---"}
             ],
-            temperature=0.3
-        )
-    except APIConnectionError:
-        raise HTTPException(
-            status_code=503,
-            detail="Could not connect to the local AI model. Make sure Ollama is running and the model is pulled."
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"AI generation failed: {str(e)}"
+            **_temperature(settings.llm_summary_temperature)
         )
 
-    return response.choices[0].message.content
+    summary = response.choices[0].message.content
+
+    if summary is None:
+        raise HTTPException(status_code=502, detail=ERROR_502_MESSAGE)
+
+    return summary
 
 
 async def generate_quiz(notes: str, num_options: int = 4, num_questions: int = 5) -> QuizResponse:
-    try:
+    with translate_llm_errors():
         response = await client.chat.completions.parse(
             model=MODEL,
             messages=[
                 {"role": "system", "content": QUIZ_SYSTEM_PROMPT},
-                {"role": "user", "content": f"Generate a quiz with exactly {num_questions} questions from the following notes. "
-                                            f"Each question must have exactly {num_options} answer options, with exactly one correct answer.\n\n"
-                                            f"---\n{notes}\n---"}
+                {"role": "user",
+                 "content": f"Generate a quiz with exactly {num_questions} questions from the following notes. "
+                            f"Each question must have exactly {num_options} answer options, with exactly one correct answer.\n\n"
+                            f"---\n{notes}\n---"}
             ],
             response_format=QuizResponse,
-            temperature=0.2
-        )
-    except APIConnectionError:
-        raise HTTPException(
-            status_code=503,
-            detail="Could not connect to the local AI model. Make sure Ollama is running and the model is pulled."
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"AI generation failed: {str(e)}"
+            **_temperature(settings.llm_structured_temperature)
         )
 
     quiz = response.choices[0].message.parsed
+    if quiz is None:
+        raise HTTPException(status_code=502, detail=ERROR_502_MESSAGE)
     validate_quiz(quiz, expected_options=num_options, expected_questions=num_questions)
 
     return quiz
 
 
 async def generate_flashcards(notes: str, num_flashcards: int = 5) -> FlashcardResponse:
-    try:
+    with translate_llm_errors():
         response = await client.chat.completions.parse(
             model=MODEL,
             messages=[
                 {"role": "system", "content": FLASHCARDS_SYSTEM_PROMPT},
-                {"role": "user", "content": f"Generate approximately {num_flashcards} flashcards from the following notes.\n\n"
-                                            f"---\n{notes}\n---"}
+                {"role": "user",
+                 "content": f"Generate approximately {num_flashcards} flashcards from the following notes.\n\n"
+                            f"---\n{notes}\n---"}
             ],
             response_format=FlashcardResponse,
-            temperature=0.2
-        )
-    except APIConnectionError:
-        raise HTTPException(
-            status_code=503,
-            detail="Could not connect to the local AI model. Make sure Ollama is running and the model is pulled."
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"AI generation failed: {str(e)}"
+            **_temperature(settings.llm_structured_temperature)
         )
 
     flashcards = response.choices[0].message.parsed
+    if flashcards is None:
+        raise HTTPException(status_code=502, detail=ERROR_502_MESSAGE)
     validate_flashcards(flashcards, expected_flashcards=num_flashcards)
 
     return flashcards
