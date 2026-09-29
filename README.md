@@ -56,7 +56,8 @@ Runs locally by default via **Ollama**, or connects to any OpenAI-compatible API
 
 * Python 3.11+
 * [uv](https://github.com/astral-sh/uv) (recommended package manager)
-* [Ollama](https://ollama.com/) (for running locally) or an OpenAI API key
+* [Ollama](https://ollama.com/) (for running locally)
+* [Gemini API key](aistudio.google.com/app/apikey) (for running using a free Gemini api key)
 
 ### 1. Clone & Install
 
@@ -86,10 +87,10 @@ LLM_MODEL="qwen2.5:7b-instruct"
 # LLM_SUMMARY_TEMPERATURE=0.3
 # LLM_STRUCTURED_TEMPERATURE=0.2
 
-# Alternatively, to use OpenAI:
-# LLM_BASE_URL="https://api.openai.com/v1"
-# LLM_API_KEY="sk-your-openai-api-key"
-# LLM_MODEL="gpt-4o-mini"
+# Alternatively, to use Gemini (comment everything above, including this line):
+# LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+# LLM_API_KEY=your-gemini-key
+# LLM_MODEL=gemini-3.5-flash-lite
 ```
 
 If using Ollama, pull the default model:
