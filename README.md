@@ -4,6 +4,8 @@ A privacy-first, local-capable study companion that transforms lecture notes, te
 
 Runs locally by default via **Ollama**, or connects to any OpenAI-compatible API endpoint.
 
+![home-page](images/home_page.png)
+
 ---
 
 ## Key Features
